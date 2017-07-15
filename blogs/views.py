@@ -3,30 +3,32 @@ from .models import Post, Blog, Comment
 from django.http import HttpResponse
 import json
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
-
-def post(request, get_id=1):
+@csrf_exempt
+def post(request, get_id):
     print("1")
     blog_id = get_id
+    print(blog_id)
     blog = Blog.objects.get(blog_id=blog_id)
     if request.method == 'POST':
         print("2")
-        if blog.user.last_TOKEN == request.META.get('X_Token'):
+        print(request.META.__getitem__('HTTP_X_TOKEN'))
+        print(blog.user.last_TOKEN)
+        if blog.user.last_TOKEN == request.META.__getitem__('HTTP_X_TOKEN'):
             print("3")
             form = SendPostForm(request.POST)
             # if request.POST.get('text') != None:
             if form.is_valid():
+                post = form.save(commit=False)
                 post_id = (Post.objects.filter(blog_id=blog_id).count() + 1)
-                #form.save()
-                ppost = Post(
-                    title=request.POST.get('title'),
-                    summary=request.POST.get('summary'),
-                    text=request.POST.get('text'),
-                    dateTime=timezone.now(),
-                    blog_id=blog_id,
-                    post_id=post_id
-                )
-                ppost.save()
+                post.post_id = post_id
+                post.save()
+                post.blog_id = blog_id
+                post.save()
+                post.dateTime = timezone.now()
+                post.save()
+
                 response = {
                     'status': 0,
                     'post_id': post_id
@@ -112,22 +114,24 @@ def comments(request, get_id):
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
-
+@csrf_exempt
 def comment(request, get_id):
+    print("1")
     if request.method == 'POST':
+        print("2")
         blog_id = get_id
-        form = SendCommentForm(data=request.POST)
+        form = SendCommentForm(request.POST)
         # if request.POST.get('text') != None:
         if form.is_valid():
+            print("3")
+            comment=form.save(comment=False)
             post_id = request.POST.get('post_id')
-            ccomment = Post(
-                text=request.POST.get('text'),
-                dateTime=timezone.now(),
-                blog_id=blog_id,
-                post_id=post_id,
-                comment_id=(Comment.objects.filter(blog_id=blog_id, post_id=post_id).count() + 1)
-            )
-            ccomment.save()
+            comment.dateTime = timezone.now()
+            comment.save()
+            comment.blog_id = blog_id
+            comment.save()
+            comment.comment_id = (Comment.objects.filter(blog_id=blog_id, post_id=post_id).count() + 1)
+            comment.save()
             response = {
                 'status': 0,
                 'post_id': post_id

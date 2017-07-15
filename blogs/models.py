@@ -11,7 +11,6 @@ class Blog(models.Model):
 class Post(models.Model):
     post_id = models.IntegerField(default=1)
     blog_id = models.IntegerField(default=1)
-#   blog_id = models.ForeignKey(Blog, default=None, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     summary = models.TextField(default=None)
     text = models.TextField()

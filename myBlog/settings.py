@@ -51,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'myBlog.urls'
@@ -73,8 +72,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myBlog.wsgi.application'
-
-
+WSGIPassAuthorization = True
+CORS_ORIGIN_ALLOW_ALL = True
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -140,13 +139,18 @@ CORS_ALLOW_METHODS = (
 )
 
 CORS_ALLOW_HEADERS = (
-    'x-requested-with',
-    'content-type',
     'accept',
-    'origin',
+    'accept-encoding',
     'authorization',
-    'x-csrftoken'
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-token',
 )
+WSGIPassAuthorization = True
 
 CORS_EXPOSE_HEADERS = ()
 
@@ -160,6 +164,8 @@ CORS_URLS_ALLOW_ALL_REGEX = ()
 
 
 CORS_ORIGIN_REGEX_WHITELIST = ('^(https?://)?(\w+\.)?google\.com$', )
+
+
 
 
 
