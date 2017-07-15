@@ -7,16 +7,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def post(request, get_id):
-    print("1")
     blog_id = get_id
     print(blog_id)
     blog = Blog.objects.get(blog_id=blog_id)
     if request.method == 'POST':
-        print("2")
         print(request.META.__getitem__('HTTP_X_TOKEN'))
         print(blog.user.last_TOKEN)
         if blog.user.last_TOKEN == request.META.__getitem__('HTTP_X_TOKEN'):
-            print("3")
             form = SendPostForm(request.POST)
             # if request.POST.get('text') != None:
             if form.is_valid():
@@ -116,22 +113,20 @@ def comments(request, get_id):
 
 @csrf_exempt
 def comment(request, get_id):
-    print("1")
     if request.method == 'POST':
-        print("2")
         blog_id = get_id
         form = SendCommentForm(request.POST)
         # if request.POST.get('text') != None:
         if form.is_valid():
-            print("3")
-            comment=form.save(comment=False)
+            ccomment=form.save(commit=False)
             post_id = request.POST.get('post_id')
-            comment.dateTime = timezone.now()
-            comment.save()
-            comment.blog_id = blog_id
-            comment.save()
-            comment.comment_id = (Comment.objects.filter(blog_id=blog_id, post_id=post_id).count() + 1)
-            comment.save()
+            ccomment.dateTime = timezone.now()
+            ccomment.save()
+            ccomment.blog_id = blog_id
+            ccomment.save()
+            #comment.comment_id = (Comment.objects.filter(blog_id=blog_id, post_id=post_id).count() + 1)
+            #comment.save()
+            print("0000000000")
             response = {
                 'status': 0,
                 'post_id': post_id
