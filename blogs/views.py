@@ -55,36 +55,39 @@ def post(request, get_id):
         }
     return HttpResponse(json.dumps(response), content_type="application/json")
 
-
+@csrf_exempt
 def posts(request, get_id):
     if request.method == 'GET':
         blog_id = get_id
         if 'offset' in request.GET:
             offset = int(request.GET['offset'])
+        else:
+            offset = 0
         if 'count' in request.GET:
             count = int(request.GET['count'])
-
-        wanted_post = Post.objects.filter(blog_id = blog_id).orderd_by('creation_date').values()
+        else:
+            count = Post.objects.filter(blog_id=blog_id).count()
+        wanted_comments = Comment.objects.filter(blog_id=blog_id).values()
         response = [{
-            'title': wanted_post[offset].title,
-            'summary': wanted_post[offset].summary,
-            'text': wanted_post[offset].text,
-            'dateTime': wanted_post[offset].creation_date
+            'title': wanted_comments[offset].get('title'),
+            'summary': wanted_comments[offset].get('summary'),
+            'text':wanted_comments[offset].get('text'),
+            'dateTime': wanted_comments[offset].get('dateTime')
         }]
         for i in range(offset+1, offset+count):
             response.append({
-                'title': wanted_post[i].title,
-                'summary': wanted_post[i].summary,
-                'text': wanted_post[i].text,
-                'dateTime': wanted_post[i].creation_date
+                'title': wanted_comments[offset].get('title'),
+                'summary': wanted_comments[offset].get('summary'),
+                'text':wanted_comments[offset].get('text'),
+                'dateTime': wanted_comments[offset].get('dateTime')
             })
     else:
         response = {
             'status': -1,
             'message': "some error occurred"
         }
-
     return HttpResponse(json.dumps(response), content_type="application/json")
+
 
 @csrf_exempt
 def comments(request, get_id):
@@ -102,12 +105,12 @@ def comments(request, get_id):
         wanted_comments = Comment.objects.filter(blog_id=blog_id, post_id=post_id).values()
         response = [{
             'text': wanted_comments[offset].get('text'),
-            'dateTime': wanted_comments[offset].get('dateTime')
+            #'dateTime': wanted_comments[offset].get('dateTime')
         }]
         for i in range(offset+1, offset+count):
             response.append({
                 'text': wanted_comments[i].get('text'),
-                'dateTime': wanted_comments[i].get('dateTime')
+                #'dateTime': wanted_comments[i].get('dateTime')
             })
         print("befor else")
     else:
