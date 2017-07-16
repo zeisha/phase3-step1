@@ -9,11 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def post(request, get_id):
     blog_id = get_id
-    print(blog_id)
     blog = Blog.objects.get(blog_id=blog_id)
     if request.method == 'POST':
-        print(request.META.__getitem__('HTTP_X_TOKEN'))
-        print(blog.user.last_TOKEN)
         if blog.user.last_TOKEN == request.META.__getitem__('HTTP_X_TOKEN'):
             form = SendPostForm(request.POST)
             if form.is_valid():
@@ -62,8 +59,11 @@ def post(request, get_id):
 def posts(request, get_id):
     if request.method == 'GET':
         blog_id = get_id
-        count = request.GET.get('count')
-        offset = request.GET.get('offset')
+        if 'offset' in request.GET:
+            offset = int(request.GET['offset'])
+        if 'count' in request.GET:
+            count = int(request.GET['count'])
+
         wanted_post = Post.objects.filter(blog_id = blog_id).orderd_by('creation_date').values()
         response = [{
             'title': wanted_post[offset].title,
@@ -84,6 +84,38 @@ def posts(request, get_id):
             'message': "some error occurred"
         }
 
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+@csrf_exempt
+def comments(request, get_id):
+    if request.method == 'GET':
+        blog_id = get_id
+        post_id = request.GET.get('post_id')
+        if 'offset' in request.GET:
+            offset = int(request.GET['offset'])
+        else:
+            offset = 0
+        if 'count' in request.GET:
+            count = int(request.GET['count'])
+        else:
+            count = Comment.objects.filter(blog_id=blog_id, post_id=post_id).count()
+        wanted_comments = Comment.objects.filter(blog_id=blog_id, post_id=post_id).values()
+        response = [{
+            'text': wanted_comments[offset].get('text'),
+            'dateTime': wanted_comments[offset].get('dateTime')
+        }]
+        for i in range(offset+1, offset+count):
+            response.append({
+                'text': wanted_comments[i].get('text'),
+                'dateTime': wanted_comments[i].get('dateTime')
+            })
+        print("befor else")
+    else:
+        response = {
+            'status': -1,
+            'message': "some error occurred"
+        }
+    print("after else")
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
