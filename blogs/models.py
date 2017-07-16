@@ -25,7 +25,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    user_id = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    #user_id = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
     post_id = models.IntegerField(default=1)
     blog_id = models.IntegerField(default=1)
     comment_id = models.IntegerField(default=1)

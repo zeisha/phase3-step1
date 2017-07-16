@@ -5,6 +5,7 @@ import json
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+
 @csrf_exempt
 def post(request, get_id):
     blog_id = get_id
@@ -15,7 +16,6 @@ def post(request, get_id):
         print(blog.user.last_TOKEN)
         if blog.user.last_TOKEN == request.META.__getitem__('HTTP_X_TOKEN'):
             form = SendPostForm(request.POST)
-            # if request.POST.get('text') != None:
             if form.is_valid():
                 post = form.save(commit=False)
                 post_id = (Post.objects.filter(blog_id=blog_id).count() + 1)
@@ -87,46 +87,19 @@ def posts(request, get_id):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def comments(request, get_id):
-    if request.method == 'GET':
-        blog_id = get_id
-        post_id = request.GET.get('post_id')
-        count = request.GET.get('count')
-        offset = request.GET.get('offset')
-        wanted_comments = Comment.objects.filter(blog_id=blog_id, post_id=post_id).orderd_by('creation_date').values()
-        response = [{
-            'text': wanted_comments[offset].text,
-            'dateTime': wanted_comments[offset].creation_date
-        }]
-        for i in range(offset+1, offset+count):
-            response.append({
-                'text': wanted_comments[i].text,
-                'dateTime': wanted_comments[i].creation_date
-            })
-    else:
-        response = {
-            'status': -1,
-            'message': "some error occurred"
-        }
-
-    return HttpResponse(json.dumps(response), content_type="application/json")
-
 @csrf_exempt
 def comment(request, get_id):
     if request.method == 'POST':
         blog_id = get_id
         form = SendCommentForm(request.POST)
-        # if request.POST.get('text') != None:
         if form.is_valid():
-            ccomment=form.save(commit=False)
+            commentobj = form.save(commit=False)
             post_id = request.POST.get('post_id')
-            ccomment.dateTime = timezone.now()
-            ccomment.save()
-            ccomment.blog_id = blog_id
-            ccomment.save()
-            #comment.comment_id = (Comment.objects.filter(blog_id=blog_id, post_id=post_id).count() + 1)
-            #comment.save()
-            print("0000000000")
+
+            commentobj.blog_id = blog_id
+            commentobj.comment_id = Comment.objects.filter(post_id=post_id, blog_id = blog_id).count()+1
+            commentobj.dateTime = timezone.now()
+            commentobj.save()
             response = {
                 'status': 0,
                 'post_id': post_id

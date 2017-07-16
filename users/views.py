@@ -49,7 +49,6 @@ def register(request):
             user.save()
             blog_id = Blog.objects.count() + 1
             user = User.objects.get(username=request.POST.get('username'))
-            print(user.first_name)
             blog = Blog(blog_id=blog_id, user=user)
             user.default_blog_id = blog_id
             user.save()
