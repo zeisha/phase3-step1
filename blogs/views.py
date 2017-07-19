@@ -1,10 +1,10 @@
-from .forms import SendCommentForm, SendPostForm
+from .forms import SendCommentForm, SendPostForm, SearchForm
 from .models import Post, Blog, Comment
 from django.http import HttpResponse
-import json
+import json, string
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-
+from django.shortcuts import render
 
 @csrf_exempt
 def post(request, get_id):
@@ -44,9 +44,13 @@ def post(request, get_id):
         post_id = request.GET.get('id')
         wanted_post = Post.objects.get(post_id=post_id, blog_id=blog_id)
         response = {
-            'title': wanted_post.title,
-            'summary': wanted_post.summary,
-            'text': wanted_post.text
+            'status': 0,
+            'post': {
+                'title': wanted_post.title,
+                'summary': wanted_post.summary,
+                'text': wanted_post.text,
+                'dateTime': wanted_post.dateTime
+            }
         }
     else:
         response = {
@@ -150,3 +154,22 @@ def comment(request, get_id):
             "message": "your comment not been sent"
         }
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def search(request):
+    if request.method == 'GET':
+        form = SearchForm
+        return render(request, 'search/search.html', {'form': form})
+    else:
+        search_text = "for test, for test, for test, for test,"
+        words = search_text.split()
+        words_number = len(words)
+        if words_number in range(2, 11):
+            for blog in Blog.objects:
+                blog.score = 0
+                for word in words:
+                    blog.score += blog.wordcount[word]
+            blogs = Blog.objects.order_by('score')[:10]
+            return render(request, 'search/result.html', {'blogs': blogs})
+        else:
+            print("g")

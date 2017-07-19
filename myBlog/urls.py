@@ -18,8 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    #url(r'', include('users.urls')),
     url(r'^auth/', include('users.urls')),
     url(r'^blog/', include('blogs.urls')),
-    #url(r'^blog/(?P<get_id>\d+)/', include('blogs.urls')),
+    url(r'^search/blog/', include('blogs.urls2'))
 ]
