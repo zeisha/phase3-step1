@@ -49,7 +49,7 @@ def post(request, get_id):
                 'title': wanted_post.title,
                 'summary': wanted_post.summary,
                 'text': wanted_post.text,
-                'dateTime': wanted_post.dateTime
+                #'dateTime': wanted_post.dateTime
             }
         }
     else:
@@ -72,19 +72,23 @@ def posts(request, get_id):
         else:
             count = Post.objects.filter(blog_id=blog_id).count()
         wanted_comments = Comment.objects.filter(blog_id=blog_id).values()
-        response = [{
+        response_post = [{
             'title': wanted_comments[offset].get('title'),
             'summary': wanted_comments[offset].get('summary'),
             'text':wanted_comments[offset].get('text'),
-            'dateTime': wanted_comments[offset].get('dateTime')
+            #'dateTime': wanted_comments[offset].get('dateTime')
         }]
         for i in range(offset+1, offset+count):
-            response.append({
+            response_post.append({
                 'title': wanted_comments[offset].get('title'),
                 'summary': wanted_comments[offset].get('summary'),
-                'text':wanted_comments[offset].get('text'),
-                'dateTime': wanted_comments[offset].get('dateTime')
+                'text': wanted_comments[offset].get('text'),
+                #'dateTime': wanted_comments[offset].get('dateTime')
             })
+        response = {
+            'status': 0,
+            'posts': response_post
+        }
     else:
         response = {
             'status': -1,
@@ -107,16 +111,19 @@ def comments(request, get_id):
         else:
             count = Comment.objects.filter(blog_id=blog_id, post_id=post_id).count()
         wanted_comments = Comment.objects.filter(blog_id=blog_id, post_id=post_id).values()
-        response = [{
+        response_post = [{
             'text': wanted_comments[offset].get('text'),
             #'dateTime': wanted_comments[offset].get('dateTime')
         }]
         for i in range(offset+1, offset+count):
-            response.append({
+            response_post.append({
                 'text': wanted_comments[i].get('text'),
                 #'dateTime': wanted_comments[i].get('dateTime')
             })
-        print("befor else")
+        response = {
+            'status': 0,
+            'comments': response_post
+        }
     else:
         response = {
             'status': -1,
@@ -161,15 +168,16 @@ def search(request):
         form = SearchForm
         return render(request, 'search/search.html', {'form': form})
     else:
-        search_text = "for test, for test, for test, for test,"
-        words = search_text.split()
-        words_number = len(words)
-        if words_number in range(2, 11):
-            for blog in Blog.objects:
-                blog.score = 0
-                for word in words:
-                    blog.score += blog.wordcount[word]
-            blogs = Blog.objects.order_by('score')[:10]
-            return render(request, 'search/result.html', {'blogs': blogs})
-        else:
-            print("g")
+        print("g")
+        #search_text = "for test, for test, for test, for test,"
+        #words = search_text.split()
+        #words_number = len(words)
+        #if words_number in range(2, 11):
+        #    for blog in Blog.objects:
+        #        blog.score = 0
+        #        for word in words:
+        #            blog.score += blog.wordcount[word]
+        #    blogs = Blog.objects.order_by('score')[:10]
+        #    return render(request, 'search/result.html', {'blogs': blogs})
+        #else:
+        #    print("g")

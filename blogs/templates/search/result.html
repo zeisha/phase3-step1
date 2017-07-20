@@ -5,6 +5,13 @@
     <title>Results</title>
 </head>
 <body>
-
+<h1>Results:</h1>
+{% for blog in blogs %}
+    <div>
+        <h1>Blog ID: {{ blog.blog_id }}</h1>
+        <p>Score: {{ blog.score }}</p>
+        <p>___________________________________________________________________________________________</p>
+    </div>
+{% endfor %}
 </body>
 </html>
