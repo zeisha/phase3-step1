@@ -164,20 +164,20 @@ def comment(request, get_id):
 
 
 def search(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
+        search_text = request.POST.get('search')
+        words = search_text.split()
+        words_number = len(words)
+        if words_number in range(2, 11):
+            for blog in Blog.objects:
+                blog.score = 0
+            for word in words:
+                blog.score += blog.wordcount[word]
+            blogs = Blog.objects.order_by('score')[:10]
+            return render(request, 'search/result.html', {'blogs': blogs})
+        else:
+            print("g")
+    else:
         form = SearchForm
         return render(request, 'search/search.html', {'form': form})
-    else:
-        print("g")
-        #search_text = "for test, for test, for test, for test,"
-        #words = search_text.split()
-        #words_number = len(words)
-        #if words_number in range(2, 11):
-        #    for blog in Blog.objects:
-        #        blog.score = 0
-        #        for word in words:
-        #            blog.score += blog.wordcount[word]
-        #    blogs = Blog.objects.order_by('score')[:10]
-        #    return render(request, 'search/result.html', {'blogs': blogs})
-        #else:
-        #    print("g")
+

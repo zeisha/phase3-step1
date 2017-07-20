@@ -9,6 +9,7 @@ class Blog(models.Model):
     posts_words = models.CharField(default="", max_length=1000)
     wordcount = {}
     score = models.IntegerField(default=0)
+    search = models.CharField(default="", max_length=100)
 
     def count_words(self):
         posts = Post.objects.filter(blog_id=self.blog_id)

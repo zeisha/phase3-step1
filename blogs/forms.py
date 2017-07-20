@@ -1,6 +1,7 @@
 from django import forms
 from .models import Post
 from .models import Comment
+from .models import Blog
 
 
 class SendPostForm(forms.ModelForm):
@@ -17,5 +18,5 @@ class SendCommentForm(forms.ModelForm):
 
 class SearchForm(forms.ModelForm):
     class Meta:
-        model = Post
-        fields = ('dateTime', 'title')
+        model = Blog
+        fields = ('search',)
