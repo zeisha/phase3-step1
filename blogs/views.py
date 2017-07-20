@@ -27,6 +27,9 @@ def post(request, get_id):
                     'status': 0,
                     'post_id': post_id
                 }
+
+                Blog.objects.get(blog_id=blog_id).count_words()
+
             else:
                 response = {
                     "status": -1,

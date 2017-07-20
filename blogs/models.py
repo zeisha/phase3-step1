@@ -12,6 +12,7 @@ class Blog(models.Model):
     search = models.CharField(default="", max_length=100)
 
     def count_words(self):
+        self.posts_words = ""
         posts = Post.objects.filter(blog_id=self.blog_id)
         for post in posts:
             words = post.text.split()
