@@ -8,5 +8,5 @@ Pillow==3.3.0
 Markdown==2.6.6
 bleach==1.4.3
 psycopg2==2.6.1
-corsheaders==2.0.0
+django-cors-headers==2.0.0
 whitenoise==3.3.0
