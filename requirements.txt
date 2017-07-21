@@ -8,4 +8,5 @@ Pillow==3.3.0
 Markdown==2.6.6
 bleach==1.4.3
 psycopg2==2.6.1
+corsheaders
 whitenoise==3.3.0
