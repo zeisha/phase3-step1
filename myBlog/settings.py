@@ -95,7 +95,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')
+        #default=config('DATABASE_URL')
+        'DATABASE_URL'
     )
 }
 
