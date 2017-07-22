@@ -10,3 +10,4 @@ bleach==1.4.3
 django-cors-headers==2.0.0
 whitenoise==3.3.0
 dnspython==1.15.0
+psycopg2==2.7.2
