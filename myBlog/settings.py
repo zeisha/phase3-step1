@@ -93,11 +93,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 #    }
 #}
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
-}
+DATABASES = dict(default=dj_database_url.config(
+    default=config('DATABASE_URL')
+))
 
 
 # Password validation
